@@ -8,7 +8,8 @@
             "parse"
             "alloc1"
             "coder"
-            "ctest"
+            "tests/parse-test"
+            "tests/test"
             )
   :rules ((:compile :all (:requires (:load :previous)))))
 

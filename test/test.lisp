@@ -1,4 +1,3 @@
-; $Id: ctest.lisp,v 1.7 2006/02/18 22:49:02 tarvydas Exp $
 ; Copyright 2005 Paul Tarvydas
 
 (defun labelp (x)

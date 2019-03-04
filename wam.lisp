@@ -1,7 +1,45 @@
 ; $Id: wam.lisp,v 1.4 2006/02/18 22:49:02 tarvydas Exp $
 ;; Copyright 2005 Paul Tarvydas
 
-;; from http://wambook.sourceforge.net/ with permission (for free disctribution)
+;; from http://wambook.sourceforge.net/ with permission (for free distribution)
+
+;; L0 is a language that only does unification without backtracking
+;; L0 has "queries" and "programs".  Compile a program, then query it.  Success if p unifies with q, else fail.
+;; On success, variables in q will be bound to values from p.
+;; L0 defines STRUCTURES and VARIABLES.  It puts these in the HEAP, using TAGS to identify the kind(s) of entities.
+;; Unbound VARIABLES are represented as self-referential cells (i.e. point back to themselves).
+
+;; L0 describes a memory layout (in the HEAP) and "register" usage (called Xn)
+;; example: p(Z,h(Z,W),f(W)).
+;; the HEAP will contain (ref. Fig2.1) : 
+;;  0: STRUCT 1
+;;  1: h/2
+;;  2: REF 2
+;;  3: REF 3
+;;  4: STRUCT 5
+;;  5: f/1
+;;  6: REF 3
+;;  7: STRUCT 8
+;;  8: p/3
+;;  9: REF 2
+;; 10: STRUCT 1
+;; 11: STRUCT 5
+;;
+;; this is inside-out (postfix) notation
+;; h(Z,W) is represented in cells 0..3
+;; 
+;; Z is described in cell 2 and points to itself
+;; another reference to Z is in cell 9, which points to cell 2 (all references to Z refer to cell 2, with the first
+;; occurence being in cell 2, pointing to itself
+;;
+;; W is in cell 3 (and points to itself)
+;; 
+;; f(W) is in cells 5..6 and refers to cell 3 "W"
+;;
+;; p(... ... ...) is in cell 7 .. 11, pointing to cell 2 ("Z") and structs 1 and 5 
+
+
+;; section 2.2 discusses compilation of *queries*, section 2.3 discusses compilation of *programs*+ 
 
 (proclaim '(optimize (debug 3) (safety 3) (speed 0) (space 0)))
 
@@ -728,30 +766,30 @@
                (#.lis ll)
                (#.str ls))))))
 
-(defun f-switch-on-constant (byte) (declare (ignorable byte))
-  (let* ((c (store (deref 1)))
-	 (val (untag c))
-	 (n (next-byte))
-	 (table (next-double)))
-    (declare (ignorable n))
-    (multiple-value-bind (found code-addr)
-        (gethash val (table table))
-      (if found
-          (setf p code-addr)
-        (backtrack)))))
+;;; (defun f-switch-on-constant (byte) (declare (ignorable byte))
+;;;   (let* ((c (store (deref 1)))
+;;; 	 (val (untag c))
+;;; 	 (n (next-byte))
+;;; 	 (table (next-double)))
+;;;     (declare (ignorable n))
+;;;     (multiple-value-bind (found code-addr)
+;;;         (gethash val (table table))
+;;;       (if found
+;;;           (setf p code-addr)
+;;;         (backtrack)))))
 
 
-(defun f-switch-on-structure (byte) (declare (ignorable byte))
-  (let* ((c (store (deref 1)))
-	 (val (untag c))
-	 (n (next-byte))
-	 (table (next-double)))
-    (declare (ignorable n))
-    (multiple-value-bind (found code-addr)
-        (gethash val (table table))
-      (if found
-          (setf p code-addr)
-        (backtrack)))))
+;;; (defun f-switch-on-structure (byte) (declare (ignorable byte))
+;;;   (let* ((c (store (deref 1)))
+;;; 	 (val (untag c))
+;;; 	 (n (next-byte))
+;;; 	 (table (next-double)))
+;;;     (declare (ignorable n))
+;;;     (multiple-value-bind (found code-addr)
+;;;         (gethash val (table table))
+;;;       (if found
+;;;           (setf p code-addr)
+;;;         (backtrack)))))
 
 (defun f-neck-cut (byte) (declare (ignorable byte))
   (when (> b b0)
