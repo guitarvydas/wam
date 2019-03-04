@@ -25,14 +25,14 @@
 
 
 (defun ctest0 ()
-  (tprint (defrel0 father ((father paul albin)))))
+  (tprint (defrel0 father ((father paul father-of-paul)))))
 
 (defun ctest1 ()
   (tprint
    (defrel0 father
-           ((father paul albin))
-           ((father justin paul))
-           ((father austina paul)))))  
+           ((father paul father-of-paul))
+           ((father son-of-paul paul))
+           ((father daughter-of-paul paul)))))  
 
 (defun ctest2 ()
   (tprint
@@ -83,12 +83,12 @@
   (reset-code)
   (reset-asm)
   (defrel father
-          ((father paul albin))
-          ((father justin paul))
-          ((father austina paul)))
-  (if (equal '(((?X . "AUSTINA") (?Y . "PAUL"))
-               ((?X . "JUSTIN") (?Y . "PAUL"))
-               ((?X . "PAUL") (?Y . "ALBIN")))
+          ((father paul father-of-paul))
+          ((father son-of-paul paul))
+          ((father daughter-of-paul paul)))
+  (if (equal '(((?X . "DAUGHTER-OF-PAUL") (?Y . "PAUL"))
+               ((?X . "SON-OF-PAUL") (?Y . "PAUL"))
+               ((?X . "PAUL") (?Y . "FATHER-OF-PAUL")))
              (?- (father ?X ?Y)))
       'OK
     'FAILED))
@@ -98,13 +98,13 @@
   (reset-code)
   (reset-asm)
   (defrel father
-          ((father paul albin))
-          ((father justin paul))
-          ((father austina paul)))
+          ((father paul father-of-paul))
+          ((father son-of-paul paul))
+          ((father daughter-of-paul paul)))
   (defrel grandfather
           ((grandfather ?child ?grandfather)
            (father ?child ?father) (father ?father ?grandfather)))
-  (if (equal '(((?X . "AUSTINA") (?Y . "ALBIN")) ((?X . "JUSTIN") (?Y . "ALBIN")))
+  (if (equal '(((?X . "DAUGHTER-OF-PAUL") (?Y . "FATHER-OF-PAUL")) ((?X . "SON-OF-PAUL") (?Y . "FATHER-OF-PAUL")))
              (?- (grandfather ?X ?Y)))
       'OK
     'FAILED))
@@ -114,15 +114,15 @@
   (reset-code)
   (reset-asm)
   (defrel father
-          ((father paul albin))
-          ((father justin paul))
-          ((father austina paul)))
+          ((father paul father-of-paul))
+          ((father son-of-paul paul))
+          ((father daughter-of-paul paul)))
   (defrel grandfather
           ((grandfather ?child ?grandfather)
            (father ?child ?father) (father ?father ?grandfather)))
-  (if (equal '(((?X . "AUSTINA") (?Y . "PAUL"))
-               ((?X . "JUSTIN") (?Y . "PAUL"))
-               ((?X . "PAUL") (?Y . "ALBIN")))
+  (if (equal '(((?X . "DAUGHTER-OF-PAUL") (?Y . "PAUL"))
+               ((?X . "SON-OF-PAUL") (?Y . "PAUL"))
+               ((?X . "PAUL") (?Y . "FATHER-OF-PAUL")))
              (?- (father ?X ?Y)))
       'OK
     'FAILED))
