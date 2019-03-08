@@ -1,6 +1,8 @@
 ; $Id: opcodes.lisp,v 1.4 2006/02/18 22:49:02 tarvydas Exp $
 ;; Copyright 2005 Paul Tarvydas
 
+(in-package :wam)
+
 (defparameter *opcodes* (make-hash-table :test 'equal))
 
 (defun init-opcodes ()

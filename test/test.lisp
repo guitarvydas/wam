@@ -1,4 +1,5 @@
-; Copyright 2005 Paul Tarvydas
+;;; Copyright 2005 Paul Tarvydas
+(in-package :wam/test)
 
 (defun labelp (x)
   (char= #\$ (char (symbol-name x) 0)))

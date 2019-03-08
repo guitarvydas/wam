@@ -1,5 +1,6 @@
-; $Id: parse.lisp,v 1.7 2006/02/18 22:49:02 tarvydas Exp $
-; Copyright 2006 Paul Tarvydas
+                                        ; $Id: parse.lisp,v 1.7 2006/02/18 22:49:02 tarvydas Exp $
+                                        ; Copyright 2006 Paul Tarvydas
+(in-package :Wam)
 
 (defun parse-rule (list)
   (let* ((head (car list))

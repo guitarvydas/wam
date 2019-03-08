@@ -1,3 +1,4 @@
+(in-package :wam)
 
 (defconstant put-x-variable 1)
 (defconstant put-y-variable 2)

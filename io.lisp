@@ -1,5 +1,7 @@
 ; $Id: io.lisp,v 1.1 2006/02/04 06:34:22 tarvydas Exp $
-; Copyright 2005 Paul Tarvydas
+                                        ; Copyright 2005 Paul Tarvydas
+
+(in-package :wam)
 
 (defclass io () ())
 (defgeneric next-element (x))

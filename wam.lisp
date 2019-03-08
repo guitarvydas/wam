@@ -41,6 +41,8 @@
 
 ;; section 2.2 discusses compilation of *queries*, section 2.3 discusses compilation of *programs*+ 
 
+(in-package :wam)
+
 (proclaim '(optimize (debug 3) (safety 3) (speed 0) (space 0)))
 
 (declaim (optimize (debug 3) (safety 3) (speed 0) (space 0)))

@@ -1,0 +1,11 @@
+# WAM Prolog
+
+Paul Tarvydes
+
+## Locating the source 
+
+Place into places that implementations look for ASDF systems.  For
+example, if you have Quicklisp installed, it always looks in
+<file:~/quicklisp/local-projects/>
+
+c.f. <http://blog.quicklisp.org/2018/01/the-quicklisp-local-projects-mechanism.html>

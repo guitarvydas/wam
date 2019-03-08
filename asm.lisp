@@ -21,6 +21,8 @@
 ;;
 ;; uses objects of type io for input and output
 
+(in-package :wam)
+
 (defvar *pc* 0)
 (defvar *labels* nil)
 (defvar *pc-start* 0)

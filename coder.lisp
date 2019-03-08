@@ -12,6 +12,7 @@
 ;; The top level of the coder is the defrel function which
 ;; defines groups of relations - all with the same name, but
 ;; possibly with different arities
+(in-package :wam)
 
 (defvar *ctable* (make-hash-table))
 (defvar *next-label* 0)

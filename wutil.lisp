@@ -1,5 +1,6 @@
 ; $Id$
-; Copyright 2005 Paul Tarvydas
+                                        ; Copyright 2005 Paul Tarvydas
+(in-package :wam)
 
 (defun dump ()
   (format t "p=~A cp=~A s=~A h=~A hb=~A b=~A b0=~A e=~A tr=~A mode=~A~%"
@@ -29,6 +30,7 @@
 (defun unconst (x)
   (gethash x unconsts))
 
+#+(or) ;; FIXME ccl-1.12-dev-macos can't grok this
 (defun dump-tag (x)
   (case (tag x)
     (#.int "int")

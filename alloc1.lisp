@@ -36,6 +36,8 @@
 ;; itself contains the resulting information and the
 ;; symbol table is discarded.
 
+(in-package :wam)
+
 (defun allocate (tree)
   (let ((symbols (nreverse (alloc-top-level tree 0 nil)))
         (has-locals nil))

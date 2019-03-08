@@ -1,3 +1,4 @@
+(in-package :wam/test)
 
 (defun test0 ()
   (pprint (parse-rule '((father paul albin)))))

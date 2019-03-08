@@ -1,3 +1,4 @@
+;; Duplicated in <file:wam.asd> to allow encapsulation in ASDF
 (defsystem wam (:optimize ((speed 0) (space 0) (safety 3) (debug 3)))
   :members ("const"
             "wam"
