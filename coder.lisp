@@ -17,12 +17,9 @@
 (defvar *ctable* (make-hash-table))
 (defvar *next-label* 0)
 
-(defun defrel-reset ()
-  (setq *next-label* 0))
-  
 (defmacro defrel (name &rest rules)
   `(let ((r-code (defrel-1 ',name ',rules)))
-     (tprint r-code)
+     (wam/debug:tprint r-code)
      (assemble (make-instance 'list-io :list r-code) *code-io*)))
 
 (defmacro defrel0 (name &rest rules)
@@ -362,17 +359,7 @@
 
 ;; a query is a conjunction of goals - just like a body
 ;; of a rule (without the head)
-(defun defquery-1 (name body)
-  (let* ((query-name (make-arity-label name 0))
-         (tree (car (allocate (parse-query body))))
-         (goals (cdr tree)))
-    `(,(lab-def query-name)
-      allocate
-      ,@(query-body name 0 goals)
-      done
-      deallocate)))
-
-(defun defquery-2 (name alloc-tree)
+(defun defquery% (name alloc-tree)
   (let* ((query-name (make-arity-label name 0))
          (tree (car alloc-tree))
          (goals (cdr tree)))
@@ -388,8 +375,8 @@
 (defun run-query (body)
   (multiple-value-bind (tree symbols)
        (allocate (parse-query body))
-    (let ((q-code (defquery-2 'query tree)))
-      (tprint q-code)
+    (let ((q-code (defquery% 'query tree)))
+      (wam/debug:tprint q-code)
       (terpri)
       (assemble (make-instance 'list-io :list q-code) *code-io*)
       (interp-wam (asm-get-name 'query/0)

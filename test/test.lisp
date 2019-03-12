@@ -26,28 +26,28 @@
 
 
 (defun ctest0 ()
-  (tprint (defrel0 father ((father paul father-of-paul)))))
+  (tprint (wam:defrel0 father ((father paul father-of-paul)))))
 
 (defun ctest1 ()
   (tprint
-   (defrel0 father
+   (wam:defrel0 father
            ((father paul father-of-paul))
            ((father son-of-paul paul))
            ((father daughter-of-paul paul)))))  
 
 (defun ctest2 ()
   (tprint
-   (defrel0 grandfather
+   (wam:defrel0 grandfather
            ((grandfather ?x ?y) (father ?x ?z) (father ?z ?y)))))   
 
 (defun ctest3 ()
   (tprint
-   (defrel0 p
+   (wam:defrel0 p
            ((p ?X ?Y ?Z) (q ?U ?V ?W) (r ?Y ?Z ?U) (s ?U ?W) (t ?X ?V)))))
   
 (defun ctest4 ()
   (tprint
-   (defrel0 p
+   (wam:defrel0 p
            ((p #(f ?X) #(h ?Y #(f a)) ?Y) (father #(y ?X) #(z ?Y))))))
 
 
@@ -73,217 +73,217 @@
 
 (defun ctest11 ()
   (tprint
-   (defrel0 p ((p ?X ?Y) (p (?X ?Y))))))
+   (wam:defrel0 p ((p ?X ?Y) (p (?X ?Y))))))
 
 (defun ctest12 ()
   (tprint
-   (defrel0 p ((p (?X ?Y))))))
+   (wam:defrel0 p ((p (?X ?Y))))))
 
 (defun ltest1 ()
-  (init-opcodes)
-  (reset-code)
-  (reset-asm)
-  (defrel father
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel father
           ((father paul father-of-paul))
           ((father son-of-paul paul))
           ((father daughter-of-paul paul)))
   (if (equal '(((?X . "DAUGHTER-OF-PAUL") (?Y . "PAUL"))
                ((?X . "SON-OF-PAUL") (?Y . "PAUL"))
                ((?X . "PAUL") (?Y . "FATHER-OF-PAUL")))
-             (?- (father ?X ?Y)))
+             (wam:?- (father ?X ?Y)))
       'OK
     'FAILED))
 
 (defun ltest2 ()
-  (init-opcodes)
-  (reset-code)
-  (reset-asm)
-  (defrel father
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel father
           ((father paul father-of-paul))
           ((father son-of-paul paul))
           ((father daughter-of-paul paul)))
-  (defrel grandfather
+  (wam:defrel grandfather
           ((grandfather ?child ?grandfather)
            (father ?child ?father) (father ?father ?grandfather)))
   (if (equal '(((?X . "DAUGHTER-OF-PAUL") (?Y . "FATHER-OF-PAUL")) ((?X . "SON-OF-PAUL") (?Y . "FATHER-OF-PAUL")))
-             (?- (grandfather ?X ?Y)))
+             (wam:?- (grandfather ?X ?Y)))
       'OK
     'FAILED))
 
 (defun ltest4 ()
-  (init-opcodes)
-  (reset-code)
-  (reset-asm)
-  (defrel father
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel father
           ((father paul father-of-paul))
           ((father son-of-paul paul))
           ((father daughter-of-paul paul)))
-  (defrel grandfather
+  (wam:defrel grandfather
           ((grandfather ?child ?grandfather)
            (father ?child ?father) (father ?father ?grandfather)))
   (if (equal '(((?X . "DAUGHTER-OF-PAUL") (?Y . "PAUL"))
                ((?X . "SON-OF-PAUL") (?Y . "PAUL"))
                ((?X . "PAUL") (?Y . "FATHER-OF-PAUL")))
-             (?- (father ?X ?Y)))
+             (wam:?- (father ?X ?Y)))
       'OK
     'FAILED))
 
 (defun ltest5 ()
-  (init-opcodes)
-  (reset-code)
-  (reset-asm)
-  (defrel lll ((lll (1 2))))
-  (?- (lll (?X ?Y))))
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel lll ((lll (1 2))))
+  (wam:?- (lll (?X ?Y))))
 
 (defun ltest6 ()
-  (init-opcodes)
-  (reset-code)
-  (reset-asm)
-  (defrel lis ((lis (1 2))))
-  (?- (lis ?X)))
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel lis ((lis (1 2))))
+  (wam:?- (lis ?X)))
 
 (defun ltest7 ()
-  (init-opcodes)
-  (reset-code)
-  (reset-asm)
-  (defrel struct ((struct #(a b c))))
-  (?- (struct ?X)))
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel struct ((struct #(a b c))))
+  (wam:?- (struct ?X)))
 
 (defun ltest8 ()
-  (init-opcodes)
-  (reset-code)
-  (reset-asm)
-  (defrel struct ((struct #(a b c))))
-  (?- (struct #(a ?X ?Y))))
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel struct ((struct #(a b c))))
+  (wam:?- (struct #(a ?X ?Y))))
 
 (defun ltest9 ()
-  (init-opcodes)
-  (reset-code)
-  (reset-asm)
-  (defrel struct
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel struct
           ((struct #(a b c)))
           ((struct #(a e f)))
           ((struct #(g h i))))
-  (?- (struct #(a ?X ?Y))))
+  (wam:?- (struct #(a ?X ?Y))))
 
 ;; this is illegal
 ;;;; (defun ltest10 ()
-;;;;   (init-opcodes)
-;;;;   (reset-code)
-;;;;   (reset-asm)
-;;;;   (defrel struct
+;;;;   (wam:init-opcodes)
+;;;;   (wam:reset-code)
+;;;;   (wam:reset-asm)
+;;;;   (wam:defrel struct
 ;;;;           ((struct #(a b c)))
 ;;;;           ((struct #(a e f)))
 ;;;;           ((struct #(g h i))))
-;;;;   (?- (struct #(?X ?Y ?Z))))
+;;;;   (wam:?- (struct #(?X ?Y ?Z))))
 
 (defun ltest10 ()
-  (init-opcodes)
-  (reset-code)
-  (reset-asm)
-  (defrel struct
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel struct
           ((struct #(a b c)))
           ((struct #(a 1 2)))
           ((struct #(g h i))))
-  (?- (struct #(a ?X ?Y))))
+  (wam:?- (struct #(a ?X ?Y))))
 
 (defun ltest11 ()
-  (init-opcodes)
-  (reset-code)
-  (reset-asm)
-  (defrel bb
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel bb
           ((bb 1 1))
           ((bb 2 3))
           ((bb 3 1))
           ((bb a b)))
-  (?- (bb ?id 1)))
+  (wam:?- (bb ?id 1)))
 
 (defun ltest12 ()
-  (init-opcodes)
-  (reset-code)
-  (reset-asm)
-  (defrel bb
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel bb
           ((bb 1 1))
           ((bb 2 3))
           ((bb 3 1))
           ((bb 4 2))
           ((bb 2 2))
           ((bb a b)))
-  (defrel get-bb
+  (wam:defrel get-bb
           ((get-bb ?X ?Y) (bb ?X ?Y) (bb ?Y ?X)))
-  (?- (get-bb ?id ?X)))
+  (wam:?- (get-bb ?id ?X)))
 
 (defun ltest13 ()
-  (init-opcodes)
-  (reset-code)
-  (reset-asm)
-  (defrel bb
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel bb
           ((bb 1 1))
           ((bb 2 3))
           ((bb 3 1))
           ((bb 4 2))
           ((bb 2 2))
           ((bb a b)))
-  (defrel get-bb
+  (wam:defrel get-bb
           ((get-bb ?X ?Y) (bb ?X ?Y) ! (bb ?Y ?X)))
-  (?- (get-bb ?id ?X)))
+  (wam:?- (get-bb ?id ?X)))
 
 (defun ltest13a ()
-  (init-opcodes)
-  (reset-code)
-  (reset-asm)
-  (defrel bb
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel bb
           ((bb 1 1))
           ((bb 2 2)))
-  (defrel get-bb
+  (wam:defrel get-bb
           ((get-bb ?X ?Y) (bb ?X ?Y) ! (bb ?Y ?X)))
-  (?- (get-bb ?id ?X)))
+  (wam:?- (get-bb ?id ?X)))
 
 (defun ltest14 ()
-  (init-opcodes)
-  (reset-code)
-  (reset-asm)
-  (defrel bb
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel bb
           ((bb 1 1))
           ((bb 2 3))
           ((bb 3 1))
           ((bb 4 2))
           ((bb 2 2))
           ((bb a b)))
-  (defrel get-bb
+  (wam:defrel get-bb
           ((get-bb ?X ?Y) ! (bb ?X ?Y) (bb ?Y ?X)))
-  (?- (get-bb ?id ?X)))
+  (wam:?- (get-bb ?id ?X)))
 
 (defun ltest15()
-  (init-opcodes)
-  (reset-code)
-  (reset-asm)
-  (defrel bb
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel bb
           ((bb 1 1))
           ((bb 2 3))
           ((bb 3 1))
           ((bb 4 2))
           ((bb 2 2))
           ((bb a b)))
-  (defrel get-bb
+  (wam:defrel get-bb
           ((get-bb ?X ?Y) (bb ?X 1) !)
           ((get-bb ?X ?Y) (bb ?X ?Y)))
-  (?- (get-bb ?id ?X)))
+  (wam:?- (get-bb ?id ?X)))
 
 
 (defun ltest15a()
-  (init-opcodes)
-  (reset-code)
-  (reset-asm)
-  (defrel bb
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel bb
           ((bb 1 1))
           ((bb 2 3))
           ((bb 3 1))
           ((bb 4 2))
           ((bb 2 2))
           ((bb a b)))
-  (defrel get-bb
+  (wam:defrel get-bb
           ((get-bb ?X ?Y) (bb ?X 1) !))
-  (?- (get-bb ?id ?X)))
+  (wam:?- (get-bb ?id ?X)))
 
 ;; sept. 15, 2006 - successfully runs tests to here

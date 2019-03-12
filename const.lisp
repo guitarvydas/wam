@@ -132,12 +132,3 @@
                                                           )))
 
 
-; tags
-(defconstant int 0) ;integer
-(defconstant ref 1) ;reference
-(defconstant con 2) ;constant
-(defconstant lis 3) ;list
-(defconstant str 4) ;structure
-(defconstant spcl 5) ; special 0 is nil
-
-

@@ -1,6 +1,6 @@
 ; $Id$
                                         ; Copyright 2005 Paul Tarvydas
-(in-package :wam)
+(in-package :wam/debug)
 
 (defun dump ()
   (format t "p=~A cp=~A s=~A h=~A hb=~A b=~A b0=~A e=~A tr=~A mode=~A~%"
@@ -19,26 +19,26 @@
   (format t "~%"))
 
 (defun dump-cell (i)
-  (if (= (regx i) 0)
+  (if (= (wam:regx i) 0)
       (format t "-- ")
     (format t "[~A ~A] "
-            (dump-tag (regx i))
-            (if (= con (tag (regx i)))
-                (unconst (untag (regx i)))
-              (dump-untag (regx i))))))
+            (dump-tag (wam:regx i))
+            (if (= con (wam/tags:tag (wam:regx i)))
+                (unconst (wam/tags:untag (wam:regx i)))
+              (dump-untag (wam:regx i))))))
 
 (defun unconst (x)
   (gethash x unconsts))
 
-#+(or) ;; FIXME ccl-1.12-dev-macos can't grok this
 (defun dump-tag (x)
-  (case (tag x)
-    (#.int "int")
-    (#.ref "ref")
-    (#.con "con")
-    (#.lis "lis")
-    (#.str "str")
+  (case (wam/tags:tag x)
+    (#.wam/tags:int "int")
+    (#.wam/tags:ref "ref")
+    (#.wam/tags:con "con")
+    (#.wam/tags:lis "lis")
+    (#.wam/tags:str "str")
+    (#.wam/tags:spcl "spcl")
     (otherwise "unknown")))
 
 (defun dump-untag (x)
-  (untag x))
+  (wam/tags:untag x))

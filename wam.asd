@@ -1,21 +1,32 @@
 (defsystem wam
-  :components ((:file "package")))
+  :components ((:file "package")
+               (:file "store")))
 
-(defsystem wam/all
+(defsystem wam/tags
   :depends-on (wam)
   :components ((:module source :pathname "./" :components
-                        ((:file "wutil") ;; FIXME:  DUMP-TAG doesn't work on type selector
+                ((:file "tags")))))
+
+(defsystem wam/debug
+  :depends-on (wam wam/tags)
+  :components ((:module source :pathname "./" :components
+                        ((:file "wam-debug")
+                         (:file "wutil")))))
+
+(defsystem wam/all
+  :depends-on (wam wam/debug wam/tags)
+  :components ((:module source :pathname "./" :components
+                        ((:file "alloc1")
                          (:file "coder")
                          (:file "asm")
                          (:file "const")
                          (:file "parse")
                          (:file "io")
                          (:file "opcodes")
-                         (:file "alloc1")
                          (:file "wam")))))
 
 (defsystem wam/test
-  :depends-on (wam)
+  :depends-on (wam wam/debug)
   :components ((:module suite :pathname "test/" :components
                         ((:file "parse-test")
                          (:file "test")))))
@@ -27,9 +38,3 @@
                          (:static-file "t13.pl")
                          (:static-file "t14.pl")
                          (:static-file "t15.pl")))))
-
-
-                        
-
-
-               
