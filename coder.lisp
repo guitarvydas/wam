@@ -26,7 +26,7 @@
   `(defrel-1 ',name ',rules))
 
 (defmacro defquery (name &body body)
-  `(defquery-1 ',name ',(car body)))
+  `(defquery-with-body ',name ',(car body)))
 
 (defun defrel-1 (name rules)
   ;; all similarly-named rules with the same arity
@@ -359,6 +359,18 @@
 
 ;; a query is a conjunction of goals - just like a body
 ;; of a rule (without the head)
+
+;; this is just for the defquery macro (test.lisp)
+(defun defquery-with-body (name body)
+  (let* ((query-name (make-arity-label name 0))
+         (tree (car (allocate (parse-query body))))
+         (goals (cdr tree)))
+    `(,(lab-def query-name)
+      allocate
+      ,@(query-body name 0 goals)
+      done
+      deallocate)))
+  
 (defun defquery% (name alloc-tree)
   (let* ((query-name (make-arity-label name 0))
          (tree (car alloc-tree))

@@ -68,7 +68,9 @@
 
 (defconstant last-opcode 59)
 
-(defconstant opcode-array (make-array 60
+
+;; defparameter instead of defconstant because of SBCL (see "idiosyncracies" in sbcl manual)
+(defparameter opcode-array (make-array 60
                                       :initial-contents '(nil
                                                           f-put-x-variable
                                                           f-put-y-variable

@@ -46,22 +46,23 @@
 (proclaim '(optimize (debug 3) (safety 3) (speed 0) (space 0)))
 
 (declaim (optimize (debug 3) (safety 3) (speed 0) (space 0)))
-  (defun reset-wam ()
-    (setf p 0
-          cp -1
-          s 0
-          h heap-start
-          hb heap-start
-          b (1- stack-start)
-          b0 (1- stack-start)
-          e stack-start
-          tr trail-start
-          fail nil
-          mode :read
-          number-of-args 0
-          (fill-pointer pdl) 0)
-    (loop for i from 0 below store-size do
-          (setf (aref store i) 0)))
+
+(defun reset-wam ()
+  (setf p 0
+        cp -1
+        s 0
+        h heap-start
+        hb heap-start
+        b (1- stack-start)
+        b0 (1- stack-start)
+        e stack-start
+        tr trail-start
+        fail nil
+        mode :read
+        number-of-args 0
+        (fill-pointer pdl) 0)
+  (loop for i from 0 below store-size do
+        (setf (aref store i) 0)))
 
 (defun interp-wam (start symbols &optional display)
   (let (result)
@@ -88,7 +89,6 @@
                (wam/debug:dump)
                (format t "~%")))))
     result))
-
 
 (defun f-put-x-variable (byte) (declare (ignorable byte))
   (let* ((x (next-byte))
@@ -655,8 +655,6 @@
       (setf b (stack (+ e 1 n)))
       (tidy-trail))))
 
-
-
 (defun fetch (pair)
   ; given a symbol-allocation pair, fetch the
   ; value of the symbol and return it
@@ -721,20 +719,20 @@
         (deref val)
       (the fixnum a))))
 
-  (defun bind (a1 a2)
-    (declare (type fixnum v1 v2 t1 a1 a2))
-    (let* ((v1 (store a1))
-           (v2 (store a2))
-           (t1 (wam/tags:tag v1))
-           (t2 (wam/tags:tag v2)))
-      (if (and (= t1 ref)
-               (or (/= t2 ref) (< a2 a1)))
-          (progn
-            (setf (store a1) (store a2))
-            (trail a1))
+(defun bind (a1 a2)
+  (declare (type fixnum v1 v2 t1 a1 a2))
+  (let* ((v1 (store a1))
+         (v2 (store a2))
+         (t1 (wam/tags:tag v1))
+         (t2 (wam/tags:tag v2)))
+    (if (and (= t1 ref)
+             (or (/= t2 ref) (< a2 a1)))
         (progn
-          (setf (store a2) (store a1))
-          (trail a2)))))
+          (setf (store a1) (store a2))
+          (trail a1))
+      (progn
+        (setf (store a2) (store a1))
+        (trail a2)))))
 
 (defun trail (a)
   (declare (type fixnum a))
@@ -759,46 +757,46 @@
                  (setf (trail-stack i) (trail-stack (1- tr)))
                  (decf tr))))))
 
-  (defun unify (a1 a2)
-    (declare (type fixnum a1 a2))
-    (pdl-push a1)
-    (pdl-push a2)
-    (setf fail nil)
-    (loop while (not (or (pdl-empty) fail)) do
-      (let ((d1 (deref (pdl-pop)))
-            (d2 (deref (pdl-pop))))
-        (declare (type fixnum d1 d2))
-        (unless (= d1 d2)
-          (let* ((s1 (store d1))
-                 (t1 (wam/tags:tag s1))
-                 (v1 (wam/tags:untag s1))
-                 (s2 (store d2))
-                 (t2 (wam/tags:tag s2))
-                 (v2 (wam/tags:untag s2)))
-            (declare (type fixnum s1 t1 v1 s2 t2 v2))
-            (if (= ref t1)
-                (bind d1 d2)
-              (ecase t2
-                (#.wam/tags:ref (bind d1 d2))
-                (#.wam/tags:con (setf fail (or (/= t1 con) (/= v1 v2))))
-                (#.wam/tags:int (setf fail (or (/= t1 con) (/= v1 v2))))
-                (#.wam/tags:lis (if (/= t1 lis)
-                           (setf fail t)
-                         (progn
-                           (pdl-push v1)
-                           (pdl-push v2)
-                           (pdl-push (1+ v1))
-                           (pdl-push (1+ v2)))))
-                (#.wam/tags:str (if (/= str t1)
-                           (setf fail t)
-                         (let ((fn1 (store v1))
-                               (fn2 (store v2)))
-                           (declare (type fixnum fn1 fn2))
-                           (if (/= fn1 fn2)
-                               (setf fail t)
-                             (loop for i from 1 to (arity fn1) do
-                               (pdl-push (+ v1 i))
-                               (pdl-push (+ v2 i))))))))))))))
+(defun unify (a1 a2)
+  (declare (type fixnum a1 a2))
+  (pdl-push a1)
+  (pdl-push a2)
+  (setf fail nil)
+  (loop while (not (or (pdl-empty) fail)) do
+        (let ((d1 (deref (pdl-pop)))
+              (d2 (deref (pdl-pop))))
+          (declare (type fixnum d1 d2))
+          (unless (= d1 d2)
+            (let* ((s1 (store d1))
+                   (t1 (wam/tags:tag s1))
+                   (v1 (wam/tags:untag s1))
+                   (s2 (store d2))
+                   (t2 (wam/tags:tag s2))
+                   (v2 (wam/tags:untag s2)))
+              (declare (type fixnum s1 t1 v1 s2 t2 v2))
+              (if (= ref t1)
+                  (bind d1 d2)
+                (ecase t2
+                  (#.wam/tags:ref (bind d1 d2))
+                  (#.wam/tags:con (setf fail (or (/= t1 con) (/= v1 v2))))
+                  (#.wam/tags:int (setf fail (or (/= t1 con) (/= v1 v2))))
+                  (#.wam/tags:lis (if (/= t1 lis)
+                                      (setf fail t)
+                                    (progn
+                                      (pdl-push v1)
+                                      (pdl-push v2)
+                                      (pdl-push (1+ v1))
+                                      (pdl-push (1+ v2)))))
+                  (#.wam/tags:str (if (/= str t1)
+                                      (setf fail t)
+                                    (let ((fn1 (store v1))
+                                          (fn2 (store v2)))
+                                      (declare (type fixnum fn1 fn2))
+                                      (if (/= fn1 fn2)
+                                          (setf fail t)
+                                        (loop for i from 1 to (arity fn1) do
+                                              (pdl-push (+ v1 i))
+                                              (pdl-push (+ v2 i))))))))))))))
 
 ;  (let (code-p procs consts id)
 (defvar code-p)
@@ -875,4 +873,3 @@
 (defun code ()
   code)
 
-;)

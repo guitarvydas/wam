@@ -16,13 +16,13 @@
 (defsystem wam/all
   :depends-on (wam wam/debug wam/tags)
   :components ((:module source :pathname "./" :components
-                        ((:file "alloc1")
-                         (:file "coder")
-                         (:file "asm")
-                         (:file "const")
-                         (:file "parse")
-                         (:file "io")
+                        ((:file "const")
                          (:file "opcodes")
+                         (:file "io")
+                         (:file "parse")
+                         (:file "asm")
+                         (:file "alloc1")
+                         (:file "coder")
                          (:file "wam")))))
 
 (defsystem wam/test

@@ -9,7 +9,9 @@
    #:reset-code
    #:reset-asm
    #:?-
-   #:regx))
+   #:regx
+   #:parse-query
+   #:parse-rule))
 
 (defpackage wam/debug
   (:use :cl
