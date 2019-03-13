@@ -28,12 +28,13 @@
 (defvar *pc-start* 0)
 
 (defmacro get-label (name) `(let (v1 v2)
-                              (format *standard-output* "get label /~S/~%" ,name)
+                              (format *standard-output* "~&get label /~S/~%" ,name)
                               (multiple-value-setq (v1 v2)
                                   (gethash (symbol-name ,name) *labels*))
                               (values v1 v2)))
 
-(defmacro put-label (name val) `(progn (format *standard-output* "put label /~S/ /~S/~%" ,name ,val)
+(defmacro put-label (name val) `(progn
+                                  (format *standard-output* "~&put label /~S/ /~S/~%" ,name ,val)
                                   (setf (gethash ,name *labels*) ,val)))
 
 (defun asm-get-name (name)
