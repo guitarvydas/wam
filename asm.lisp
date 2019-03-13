@@ -143,7 +143,7 @@
    (t (assert nil))))
 
 (defun asm-get-name (name)
-  (gethash name *labels*))
+  (gethash (symbol-name name) *labels*))
 
 (defun prolog-p (s)
   (position #\/ (symbol-name s)))
@@ -175,7 +175,7 @@
 
 (defun strip-to-symbol (item)
   "remove 1st character from symbol, then return it as a string"
-  (intern (subseq (symbol-name item) 1)))
+  (intern (subseq (symbol-name item) 1) "KEYWORD"))
 
 (defun out-word (item outf emit-p)
   (when emit-p 

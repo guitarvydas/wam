@@ -131,24 +131,24 @@
              (prog1
                  (if nested
                      (if (alloc-is-seen alloc)
-                         `(,(if is-temp 'unify-x-value 'unify-y-value)
+                         `(,(if is-temp unify-x-value unify-y-value)
                            ,reg ,@(tail))
-                       `(,(if is-temp 'unify-x-variable 'unify-y-variable)
+                       `(,(if is-temp unify-x-variable unify-y-variable)
                          ,reg ,@(tail)))
                    (if (alloc-is-seen alloc)
-                       `(,(if is-temp 'get-x-value 'get-y-value)
+                       `(,(if is-temp get-x-value get-y-value)
                          ,reg ,a-reg ,@(tail))
-                     `(,(if is-temp 'get-x-variable 'get-y-variable)
+                     `(,(if is-temp get-x-variable get-y-variable)
                        ,reg ,a-reg ,@(tail))))
                (set-seen alloc))))
           (const
            (let ((k (const-kind item)))
              (if nested
-                 `(,(choose-k k 'unify-byte-constant 'unify-word-constant
-                              'unify-tri-constant 'unify-constant)
+                 `(,(choose-k k unify-byte-constant unify-word-constant
+                              unify-tri-constant unify-constant)
                    ,(const-name k item) ,@(tail))
-               `(,(choose-k k 'get-byte-constant 'get-word-constant
-                            'get-tri-constant 'get-constant)
+               `(,(choose-k k get-byte-constant get-word-constant
+                            get-tri-constant get-constant)
                  ,(const-name k item) ,a-reg ,@(tail)))))
           (struct
            (let ((struct-name (make-arity-label (second item) (third item))))
@@ -204,23 +204,23 @@
              (prog1
                  (if nested
                      (if (alloc-is-seen alloc)
-                         `(,(if is-temp 'unify-x-value 'unify-y-value)
+                         `(,(if is-temp unify-x-value unify-y-value)
                            ,reg ,@(tail))
-                       `(,(if is-temp 'unify-x-variable 'unify-y-variable)
+                       `(,(if is-temp unify-x-variable unify-y-variable)
                          ,reg ,@(tail)))
                    (if (alloc-is-seen alloc)
-                       `(,(if is-temp 'put-x-value 'put-y-value)
+                       `(,(if is-temp put-x-value put-y-value)
                          ,reg ,a-reg ,@(tail))
-                     `(,(if is-temp 'put-x-variable 'put-y-variable)
+                     `(,(if is-temp put-x-variable put-y-variable)
                        ,reg ,a-reg ,@(tail))))
                (set-seen alloc))))               
           (const
            (let ((k (const-kind item)))
            `(,(if nested
-                  (choose-k k 'unify-byte-constant 'unify-word-constant
-                            'unify-tri-constant 'unify-constant)
-                (choose-k k 'put-byte-constant 'put-word-constant
-                          'put-tri-constant 'put-constant))
+                  (choose-k k unify-byte-constant unify-word-constant
+                            unify-tri-constant unify-constant)
+                (choose-k k put-byte-constant put-word-constant
+                          put-tri-constant put-constant))
              ,(const-name k item) ,a-reg ,@(tail))))
           (struct
            (let ((struct-name (make-arity-label (second item) (third item))))
@@ -235,7 +235,7 @@
                                  ,@(struct-tail)
                                  ,@(tail))))))
           (list
-           `(,(if nested 'unify-list 'put-list) ,(alloc-reg (second item))
+           `(,(if nested unify-list put-list) ,(alloc-reg (second item))
              ,@(code-1-body name arity (list (third item)) t a-reg)
              ,@(code-1-body name arity
                             (list (or (fourth item)
@@ -275,39 +275,39 @@
              (prog1
                  (if nested
                      (if (alloc-is-seen alloc)
-                         `(,(if is-temp 'set-x-value 'set-y-value)
+                         `(,(if is-temp set-x-value set-y-value)
                            ,reg ,@(tail))
-                       `(,(if is-temp 'set-x-variable 'set-y-variable)
+                       `(,(if is-temp set-x-variable set-y-variable)
                          ,reg ,@(tail)))
                    (if (alloc-is-seen alloc)
-                       `(,(if is-temp 'put-x-value 'put-y-value)
+                       `(,(if is-temp put-x-value put-y-value)
                          ,reg ,a-reg ,@(tail))
-                     `(,(if is-temp 'put-x-variable 'put-y-variable)
+                     `(,(if is-temp put-x-variable put-y-variable)
                        ,reg ,a-reg ,@(tail))))
                (set-seen alloc))))               
           (const
            (let ((k (const-kind item)))
              (if nested
-                 `(,(choose-k k 'set-byte-constant 'set-word-constant
-                              'set-tri-constant 'set-constant)
+                 `(,(choose-k k set-byte-constant set-word-constant
+                              set-tri-constant set-constant)
                    ,(const-name k item) ,@(tail))
-               `(,(choose-k k 'put-byte-constant 'put-word-constant
-                            'put-tri-constant 'put-constant)
+               `(,(choose-k k put-byte-constant put-word-constant
+                            put-tri-constant put-constant)
                  ,(const-name k item) ,a-reg ,@(tail)))))
           (struct
            (let ((struct-name (make-arity-label (second item) (third item))))
              (flet ((struct-tail ()
                       (query-1-body name arity (nthcdr 4 item) t a-reg)))
                (if nested
-                   `(set-variable ,(alloc-reg (fourth item))
+                   `(:set-variable ,(alloc-reg (fourth item))
                                   ,@(tail)
                                   put-structure ,struct-name ,(alloc-reg (fourth item))
                                     ,@(struct-tail))
-                 `(put-structure ,struct-name ,a-reg
+                 `(:put-structure ,struct-name ,a-reg
                                  ,@(struct-tail)
                                  ,@(tail))))))
           (list
-           `(,(if nested 'set-list 'put-list) ,(alloc-reg (second item))
+           `(,(if nested set-list put-list) ,(alloc-reg (second item))
              ,@(query-1-body name arity (list (third item)) t a-reg)
              ,@(query-1-body name arity
                             (list (or (fourth item)

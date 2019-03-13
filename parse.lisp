@@ -72,7 +72,7 @@
   locals)
 
 (defun parse-clause (clause)
-  (if (eq clause '!)
+  (if (and (symbolp clause) (string= "!" (symbol-name clause))) ;;(eq clause '!)
       '(cut)
     `(proc ,(make-call :name (car clause) :arity (1- (length clause)) :locals 0)
            ,@(mapcar #'parse-arg (cdr clause)))))
