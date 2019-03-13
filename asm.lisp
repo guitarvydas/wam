@@ -27,6 +27,18 @@
 (defvar *labels* nil)
 (defvar *pc-start* 0)
 
+(defmacro get-label (name) `(let (v1 v2)
+                              (format *standard-output* "get label /~S/~%" ,name)
+                              (multiple-value-setq (v1 v2)
+                                  (gethash (symbol-name ,name) *labels*))
+                              (values v1 v2)))
+
+(defmacro put-label (name val) `(progn (format *standard-output* "put label /~S/ /~S/~%" ,name ,val)
+                                  (setf (gethash ,name *labels*) ,val)))
+
+(defun asm-get-name (name)
+  (get-label name))
+
 (defun symbol-first-char (sym)
   (and (symbolp sym) (char (symbol-name sym) 0)))
 
@@ -76,15 +88,15 @@
     (if (eq '= (first item))
         ;; equate
         (progn
-          (unless emit-p (assert (null (gethash (second item) *labels*))))
-          (setf (gethash (second item) *labels*) (third item)))
+          (unless emit-p (assert (null (get-label (second item)))))
+          (put-label (second item) (third item)))
       (if (eq 'quote (first item))
           ;; char emit
           (progn (out-byte (char-code (char (format nil "~A" (second item)) 0))
                            outf emit-p) (incf *pc*))
 
         (let ((base (first item)) (name (second item)))
-          (multiple-value-bind (b success) (gethash base *labels*)
+          (multiple-value-bind (b success) (get-label base)
             (error-if (and emit-p (not success)) (format nil "ASM: base label ~A is not defined" base)
                       :ex 'asm-error)
             (if (numberp name)
@@ -93,7 +105,7 @@
                            (out-flexi-num diff outf emit-p))
                   (setf *pc* (+ *pc* (calc-word-size 0))))
               
-              (multiple-value-bind (v success) (gethash name *labels*)
+              (multiple-value-bind (v success) (get-label name)
                 (error-if (and emit-p (not success)) (format nil "ASM: label ~A is not defined in file" name) :ex 'asm-error)
 ;(when (and emit-p (null v)) (break))
                 (if emit-p (let ((diff (- (if v v 0) b)))
@@ -112,9 +124,10 @@
       ; label definition - active only on first pass
       (#\$ (when (not emit-p)
              (let ((name (strip-to-symbol item)))
-               (multiple-value-bind (v success) (gethash name *labels*) (declare (ignore v))
+               (multiple-value-bind (v success) (get-label name)
+		 (declare (ignore v))
                  (error-if success (format nil "ASM: label ~A already defined" name)))
-               (setf (gethash name *labels*)
+               (put-label name
                      (if (prolog-p name)
                          (multiple-value-bind (name-part arity)
                              (prolog-split name)
@@ -123,7 +136,7 @@
 
       ; label reference - all labels are pc-relative
       (#\? (let ((name (strip-to-symbol item)))
-             (multiple-value-bind (v success) (gethash name *labels*)
+             (multiple-value-bind (v success) (get-label name)
              (error-if (and emit-p (not success)) (format nil "ASM: label ~A is not defined" name) :ex 'asm-error)
              (if (prolog-p name)
                  (progn
@@ -141,9 +154,6 @@
       (incf *pc* (out-word id outf emit-p))))
 
    (t (assert nil))))
-
-(defun asm-get-name (name)
-  (gethash (symbol-name name) *labels*))
 
 (defun prolog-p (s)
   (position #\/ (symbol-name s)))
@@ -167,7 +177,7 @@
     (let ((r (read s)))
       (when (symbolp r)
         (let ((name (strip-to-symbol r)) (temp-pc 0))
-          (multiple-value-bind (v success) (gethash name *labels*)
+          (multiple-value-bind (v success) (get-label name)
             (error-if (and emit-p (not success)) (format nil "ASM: label ~A is not defined" name) :ex 'asm-error)
             (setf temp-pc (+ *pc* (calc-word-size v)))
             (setf r (if v (- v temp-pc) 0)))))
@@ -175,7 +185,7 @@
 
 (defun strip-to-symbol (item)
   "remove 1st character from symbol, then return it as a string"
-  (intern (subseq (symbol-name item) 1) "KEYWORD"))
+  (intern (subseq (symbol-name item) 1)))
 
 (defun out-word (item outf emit-p)
   (when emit-p 
