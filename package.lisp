@@ -11,7 +11,9 @@
    #:?-
    #:regx
    #:parse-query
-   #:parse-rule))
+   #:parse-rule
+   
+   #:store))
 
 (defpackage wam/debug
   (:use :cl

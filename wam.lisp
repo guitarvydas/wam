@@ -684,7 +684,7 @@
      ; first const is the struct and its name contains the arity
      (let* ((a (wam/tags:untag v))
             (struct-con (store a)))
-       (assert (= con (wam/tags:tag struct-con)))
+       (assert (= wam/tags:con (wam/tags:tag struct-con)))
        (let* ((const (wam/tags:untag struct-con))
               (name-arity (gethash const (unconsts)))
               (arity (extract-arity-from-const name-arity))
@@ -725,8 +725,8 @@
          (v2 (store a2))
          (t1 (wam/tags:tag v1))
          (t2 (wam/tags:tag v2)))
-    (if (and (= t1 ref)
-             (or (/= t2 ref) (< a2 a1)))
+    (if (and (= t1 wam/tags:ref)
+             (or (/= t2 wam/tags:ref) (< a2 a1)))
         (progn
           (setf (store a1) (store a2))
           (trail a1))

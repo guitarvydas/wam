@@ -299,11 +299,11 @@
              (flet ((struct-tail ()
                       (query-1-body name arity (nthcdr 4 item) t a-reg)))
                (if nested
-                   `(:set-variable ,(alloc-reg (fourth item))
+                   `(wam::set-variable ,(alloc-reg (fourth item))
                                   ,@(tail)
                                   put-structure ,struct-name ,(alloc-reg (fourth item))
                                     ,@(struct-tail))
-                 `(:put-structure ,struct-name ,a-reg
+                 `(wam::put-structure ,struct-name ,a-reg
                                  ,@(struct-tail)
                                  ,@(tail))))))
           (list

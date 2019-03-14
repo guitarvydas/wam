@@ -146,11 +146,6 @@
    (t (assert nil))))
 
 (defun asm-get-name (name)
-  (format *standard-output* "~&name = ~S, typeof = ~S" name (type-of name))
-  (maphash #'(lambda (k v)
-               (format *standard-output* "~&labels k=~S v=~S type-of(k)=~S"
-                       k v (type-of k)))
-           *labels*)
   (gethash (as-keyword name) *labels*))
 
 (defun prolog-p (s)
@@ -164,7 +159,7 @@
 
 (defun assemble-opcode (item outf emit)
   (multiple-value-bind (v succ) (gethash item *opcodes*)
-    (error-if (not succ) (format nil "ASM: opcode ~A is not defined" item) :ex 'asm-error)
+    (error-if (not succ) (format nil "ASM: opcode ~S is not defined" item) :ex 'asm-error)
     (out-byte v outf emit))
   1)
 
