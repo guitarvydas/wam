@@ -302,7 +302,7 @@
        (trail addr))
       (#.wam/tags:con
        (let ((c1 (wam/tags:untag (store addr))))
-         (setf fail (or (/= con (wam/tags:tag (store addr)))
+         (setf fail (or (/= wam/tags:con (wam/tags:tag (store addr)))
                         (/= c c1)))))
       (otherwise
        (setf fail t)))
