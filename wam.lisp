@@ -715,7 +715,7 @@
          (tag (wam/tags:tag v))
          (val (wam/tags:untag v)))
     (declare (type fixnum a v tag val))
-    (if (and (= tag ref) (/= val a))
+    (if (and (= tag wam/tags:ref) (/= val a))
         (deref val)
       (the fixnum a))))
 
