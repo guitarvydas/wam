@@ -47,6 +47,29 @@
 ; S : next subterm to be matched
 ; HB : heap pointer at latest choice
 ; H : next heap pointer
+;
+; Stack
+; B0 : cut register
+; B  : latest choice point
+; Choice Point Frame
+;;  n : Arity
+;;  A1...An : arguments
+;;  CE : continuation environment
+;;  CP : continuation code (see Code Area)
+;;  B  : previous choice point
+;;  BP : next clause
+;;  TR : trail pointer (see Trail area)
+;;  H  : heap pointer
+;;  B0 : cut pointer
+;;
+; E  : environment
+;; environment frame
+;; CE : continuation environment
+;; CP : continuation code
+;; Y1 ... Yn: local variables
+;
+; Trail
+;; array of addresses to unbind
 
  ;; originally, wanted to make all of these variables "efficient", not specials
 

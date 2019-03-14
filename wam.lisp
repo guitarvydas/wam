@@ -469,6 +469,7 @@
        (incf h n)))))
 
 (defun f-allocate (byte) (declare (ignorable byte))
+  "create a new environment frame on the stack, storing E and CP in the frame"
   (let ((newe
 	 (cond ((= -1 cp)
 		e)
@@ -645,6 +646,8 @@
     (tidy-trail)))
 
 (defun f-get-level (byte) (declare (ignorable byte))
+  "set local variable N to current B0 (cut pointer), consume one more byte from
+code stream for N"
   (let ((n (next-byte)))
     (setf (stack (+ e 1 n)) b0))
   nil)
