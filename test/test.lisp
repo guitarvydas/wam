@@ -133,28 +133,44 @@
   (wam:reset-code)
   (wam:reset-asm)
   (wam:defrel lll ((lll (1 2))))
-  (wam:?- (lll (?X ?Y))))
+  (if (equal (wam:?- (lll (?X ?Y)))
+             '(((?X . 1) (?Y . 2))))
+      'OK
+    'FAILED))
 
 (defun ltest6 ()
   (wam:init-opcodes)
   (wam:reset-code)
   (wam:reset-asm)
   (wam:defrel lis ((lis (1 2))))
-  (wam:?- (lis ?X)))
+  (if (equal (wam:?- (lis ?X)) '(((?X 1 2))))
+      'OK
+    'FAILED))
 
 (defun ltest7 ()
   (wam:init-opcodes)
   (wam:reset-code)
   (wam:reset-asm)
   (wam:defrel struct ((struct #(a b c))))
-  (wam:?- (struct ?X)))
+  (let ((result (wam:?- (struct ?X))))
+    (if (equalp
+         result
+         '(((?X . #("A/2" "B" "C")))))
+        'OK
+      (progn
+        (format *error-output* "~&FAIL ~S~%" result)
+        'FAIL))))
 
 (defun ltest8 ()
   (wam:init-opcodes)
   (wam:reset-code)
   (wam:reset-asm)
   (wam:defrel struct ((struct #(a b c))))
-  (wam:?- (struct #(a ?X ?Y))))
+  (if (equalp
+       (wam:?- (struct #(a ?X ?Y)))
+       '(((?X . "B") (?Y . "C"))))
+      'OK
+    'FAIL))
 
 (defun ltest9 ()
   (wam:init-opcodes)
@@ -164,7 +180,11 @@
           ((struct #(a b c)))
           ((struct #(a e f)))
           ((struct #(g h i))))
-  (wam:?- (struct #(a ?X ?Y))))
+  (if (equalp
+       (wam:?- (struct #(a ?X ?Y)))
+       '(((?X . "E") (?Y . "F")) ((?X . "B") (?Y . "C"))))
+      'OK
+    'FAIL))
 
 ;; this is illegal
 ;;;; (defun ltest10 ()
@@ -185,7 +205,11 @@
           ((struct #(a b c)))
           ((struct #(a 1 2)))
           ((struct #(g h i))))
-  (wam:?- (struct #(a ?X ?Y))))
+  (if (equalp
+       (wam:?- (struct #(a ?X ?Y)))
+       '(((?X . 1) (?Y . 2)) ((?X . "B") (?Y . "C"))))
+      'OK
+    'FAIL))
 
 (defun ltest11 ()
   (wam:init-opcodes)
@@ -196,7 +220,11 @@
           ((bb 2 3))
           ((bb 3 1))
           ((bb a b)))
-  (wam:?- (bb ?id 1)))
+  (if (equalp
+       (wam:?- (bb ?id 1))
+       '(((?ID . 3)) ((?ID . 1))))
+      'OK
+    'FAIL))
 
 (defun ltest12 ()
   (wam:init-opcodes)
@@ -211,7 +239,11 @@
           ((bb a b)))
   (wam:defrel get-bb
           ((get-bb ?X ?Y) (bb ?X ?Y) (bb ?Y ?X)))
-  (wam:?- (get-bb ?id ?X)))
+  (if (equalp
+       (wam:?- (get-bb ?id ?X))
+       '(((?ID . 2) (?X . 2)) ((?ID . 1) (?X . 1))))
+      'OK
+    'FAIL))
 
 (defun ltest13 ()
   (wam:init-opcodes)
@@ -226,9 +258,14 @@
           ((bb a b)))
   (wam:defrel get-bb
           ((get-bb ?X ?Y) (bb ?X ?Y) ! (bb ?Y ?X)))
-  (wam:?- (get-bb ?id ?X)))
+  (if (equalp
+       (wam:?- (get-bb ?id ?X))
+       '(((?ID . 1) (?X . 1))))
+      'OK
+    'FAIL))
 
 (defun ltest13a ()
+  ;; same as ltest13, but with fewer relations
   (wam:init-opcodes)
   (wam:reset-code)
   (wam:reset-asm)
@@ -237,7 +274,11 @@
           ((bb 2 2)))
   (wam:defrel get-bb
           ((get-bb ?X ?Y) (bb ?X ?Y) ! (bb ?Y ?X)))
-  (wam:?- (get-bb ?id ?X)))
+ (if (equalp
+      (wam:?- (get-bb ?id ?X))
+      '(((?ID . 1) (?X . 1))))
+     'OK
+   'FAIL))
 
 (defun ltest14 ()
   (wam:init-opcodes)
@@ -252,7 +293,14 @@
           ((bb a b)))
   (wam:defrel get-bb
           ((get-bb ?X ?Y) ! (bb ?X ?Y) (bb ?Y ?X)))
-  (wam:?- (get-bb ?id ?X)))
+  (let ((result (wam:?- (get-bb ?id ?X))))
+    (if (equalp
+         result
+         '(((?ID . 1) (?X . 1))))
+        'OK
+      (progn
+        (format *error-output* "~&FAIL ~S~%" result)
+        'FAIL))))
 
 (defun ltest15()
   (wam:init-opcodes)
