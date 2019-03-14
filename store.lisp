@@ -35,6 +35,19 @@
 
 #|
 
+;; see B.3 (pg 117) of Hassan  Ait-Kaci's tutorial on WAM, for a diagram
+
+;; Code Area, Heap, Stack, Trail, PDL, argument registers A1...An
+
+; Code Area:
+; P : instruction pointer
+; CP : continue pointer
+;
+; Heap
+; S : next subterm to be matched
+; HB : heap pointer at latest choice
+; H : next heap pointer
+
  ;; originally, wanted to make all of these variables "efficient", not specials
 
 (let ((p 0)
