@@ -40,19 +40,19 @@
 ;; Code Area, Heap, Stack, Trail, PDL, argument registers A1...An
 
 ; Code Area:
-; P : instruction pointer
+; P  : instruction pointer
 ; CP : continue pointer
 ;
 ; Heap
-; S : next subterm to be matched
+; S  : next subterm to be matched
 ; HB : heap pointer at latest choice
-; H : next heap pointer
+; H  : next heap pointer
 ;
 ; Stack
 ; B0 : cut register
 ; B  : latest choice point
 ; Choice Point Frame
-;;  n : Arity
+;;  n  : Arity
 ;;  A1...An : arguments
 ;;  CE : continuation environment
 ;;  CP : continuation code (see Code Area)
