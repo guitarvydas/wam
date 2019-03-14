@@ -75,7 +75,7 @@
         do (let ((byte (next-byte)))
              (declare (type (integer 0 255) byte))
              (when display
-               (format t "~A~%" (disassem byte)))
+               (format t "~S ~A~%" byte (disassem byte)))
              (if (= #.done byte)
                  (progn
                    (when symbols
