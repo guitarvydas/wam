@@ -333,5 +333,3 @@
   (wam:defrel get-bb
           ((get-bb ?X ?Y) (bb ?X 1) !))
   (wam:?- (get-bb ?id ?X)))
-
-;; sept. 15, 2006 - successfully runs tests to here
