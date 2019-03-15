@@ -6,3 +6,5 @@ bb(2,2).
 bb(a,b).
 
 getbb2(X,Y) :- !, bb(X,Y), bb(Y,X).
+
+getbb(X,Y) :- getbb(X,Y), !, bb(X,Y), gg(Y,X).

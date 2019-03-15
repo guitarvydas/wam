@@ -90,7 +90,10 @@
                (format t "~%")))))
     result))
 
-(defun f-put-x-variable (byte) (declare (ignorable byte))
+(defun f-put-x-variable (byte) 
+  "push a fresh variable (REF cell) onto the heap, and into registers Ai and Xn, consume two more
+bytes from the code stream (n and i resp), inc h pointer (heap) once"
+  (declare (ignorable byte))
   (let* ((x (next-byte))
          (a (next-byte))
          (v (wam/tags:tag-ref h)))
@@ -99,25 +102,30 @@
           (rega a) v)
     (incf h)))
 
-(defun f-put-y-variable (byte) (declare (ignorable byte))
+(defun f-put-y-variable (byte) 
+  "in the current environment, set the nth local to a fresh REF cell, and set register Ai to refer to the fresh stack variable, consume two more bytes (n and i resp).  See CALL P,N to determine the number of locals required."
+  (declare (ignorable byte))
   (let* ((addr (+ e (next-byte) 1))
          (i (next-byte))
          (v (wam/tags:tag-ref addr)))
     (setf (stack addr) v
           (rega i) v)))
 
-(defun f-put-x-value (byte) (declare (ignorable byte))
+(defun f-put-x-value (byte)
+  (declare (ignorable byte))
   (let* ((n (next-byte))
          (i (next-byte)))
     (setf (rega i) (store n))))
 
-(defun f-put-y-value (byte) (declare (ignorable byte))
+(defun f-put-y-value (byte)
+  (declare (ignorable byte))
   (let* ((n (next-byte))
 	 (i (next-byte))
 	 (addr (deref (+ e n 1))))
     (setf (rega i) (store addr))))
 
-(defun f-put-y-unsafe-value (byte) (declare (ignorable byte))
+(defun f-put-y-unsafe-value (byte)
+  (declare (ignorable byte))
   (let* ((n (next-byte))
 	 (i (next-byte))
 	 (addr (deref (+ e n 1))))

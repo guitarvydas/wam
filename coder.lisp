@@ -385,7 +385,7 @@
   `(run-query ',body))
 
 (defun run-query (body)
-  (multiple-value-bind (tree symbols)
+  (multiple-value-bind (tree symbols has-locals)
        (allocate (parse-query body))
     (let ((q-code (defquery% 'query tree)))
       (wam/debug:tprint q-code)
