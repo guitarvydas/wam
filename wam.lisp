@@ -457,7 +457,7 @@ bytes from the code stream (n and i resp), inc h pointer (heap) once"
             (setf (store addr) (wam/tags:tag-con c))
             (trail addr))
            (#.wam/tags:con
-            (setf fail (or (/= con (wam/tags:tag (store addr)))
+            (setf fail (or (/= wam/tags:tag-con (wam/tags:tag (store addr)))
                            (/= c (wam/tags:untag (store addr))))))
            (otherwise
             (setf fail t)))))
@@ -478,6 +478,9 @@ bytes from the code stream (n and i resp), inc h pointer (heap) once"
 
 (defun f-allocate (byte) (declare (ignorable byte))
   "create a new environment frame on the stack, storing E and CP in the frame"
+  (setf e (- e 10)) ;; TODO: experiment, leave 10 slots for locals - refine this later - for now,
+                    ;; it means that a max of 10 locals are available for any rule
+                    ;; this experiment causes ltest2 to fail - something is very wrong
   (let ((newe
 	 (cond ((= -1 cp)
 		e)
@@ -490,7 +493,8 @@ bytes from the code stream (n and i resp), inc h pointer (heap) once"
 
 (defun f-deallocate (byte) (declare (ignorable byte))
   (setf cp (stack (1+ e)))
-  (setf e (stack e)))
+  (setf e (stack e))
+  (setf e (+ 10 e))) ;; TODO: see experiment above
 
 (defun f-call (byte) (declare (ignorable byte))
   (let* ((proc (next-label))

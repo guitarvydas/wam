@@ -280,6 +280,32 @@
      'OK
    'FAIL))
 
+;;; h(2,3).
+;;; f(3).
+;;; p(Z,h(Z,W),f(W)).
+;;; x(W,Z) :- p(Z,h(Z,W),f(W)).
+
+;;;   (if (equalp
+;;;        (wam:?- (struct #(a ?X ?Y)))
+;;;        '(((?X . 1) (?Y . 2)) ((?X . "B") (?Y . "C"))))
+;;;       'OK
+;;;     'FAIL))
+
+(defun ltest0 ()
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (defrel h ((h #(2 3))))
+  (defrel f ((f 3)))
+  (defrel p ((p #(?Z (h ?Z ?W) #(f ?W)))))
+  (wam:?- (p ?A)))
+
+;;;   (if (equalp
+;;;        (wam:?- (struct #(a ?X ?Y)))
+;;;        '<answer>
+;;;       'OK
+;;;     'FAIL))
+
 (defun ltest14 ()
   (wam:init-opcodes)
   (wam:reset-code)
