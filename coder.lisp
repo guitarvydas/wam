@@ -156,7 +156,7 @@
                       (code-1-head name arity a-reg (nthcdr 4 item) t)))
                (if nested
                    (let ((reg (alloc-reg (fourth item))))
-                   `('unify-x-variable ,reg
+                   `(unify-x-variable ,reg
                      ,@(tail)
                      get-structure ,struct-name ,reg
                      ,@(struct-tail)))
@@ -227,11 +227,11 @@
              (flet ((struct-tail ()
                       (code-1-body name arity (nthcdr 4 item) t a-reg)))
                (if nested
-                   `('unify-variable ,(alloc-reg (fourth item))
+                   `(unify-variable ,(alloc-reg (fourth item))
                                     ,@(tail)
-                                    'put-structure ,struct-name ,(alloc-reg (fourth item))
+                                    put-structure ,struct-name ,(alloc-reg (fourth item))
                                     ,@(struct-tail))
-                 `('put-structure ,struct-name ,a-reg
+                 `(put-structure ,struct-name ,a-reg
                                  ,@(struct-tail)
                                  ,@(tail))))))
           (list
@@ -299,11 +299,11 @@
              (flet ((struct-tail ()
                       (query-1-body name arity (nthcdr 4 item) t a-reg)))
                (if nested
-                   `('set-variable ,(alloc-reg (fourth item))
+                   `(set-variable ,(alloc-reg (fourth item))
                                   ,@(tail)
                                   'put-structure ,struct-name ,(alloc-reg (fourth item))
                                     ,@(struct-tail))
-                 `('put-structure ,struct-name ,a-reg
+                 `(put-structure ,struct-name ,a-reg
                                  ,@(struct-tail)
                                  ,@(tail))))))
           (list
