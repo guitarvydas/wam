@@ -69,13 +69,13 @@
     (reset-wam)
     (setf p (code-addr start))
     (when display
-      (format t "~A~%" (logand #xff (aref code p))))
+      (format t "p=/~s/ @p=/~A/~%" p (logand #xff (aref code p)) ))
     (catch 'quit
       (loop while (>= p 0)
         do (let ((byte (next-byte)))
              (declare (type (integer 0 255) byte))
              (when display
-               (format t "~S ~A~%" byte (disassem byte)))
+               (format t "interp ~S ~A code[0]=~S~%" byte (disassem byte) (logand #xff (aref code 0))))
              (if (= #.done byte)
                  (progn
                    (when symbols
@@ -90,8 +90,14 @@
                (format t "~%")))))
     result))
 
+#|
+In general, "Put" bytecodes move items into the argument (Ai) registers.
+
+In general, "Get" bytecodes move items from the argument (Ai) registers.
+|#
+
 (defun f-put-x-variable (byte) 
-  "push a fresh variable (REF cell) onto the heap, and into registers Ai and Xn, consume two more
+  "push a fresh variable (REF cell) onto the heap, and into registers (argument) Ai and (temp) Xn, consume two more
 bytes from the code stream (n and i resp), inc h pointer (heap) once"
   (declare (ignorable byte))
   (let* ((x (next-byte))
@@ -103,7 +109,7 @@ bytes from the code stream (n and i resp), inc h pointer (heap) once"
     (incf h)))
 
 (defun f-put-y-variable (byte) 
-  "in the current environment, set the nth local to a fresh REF cell, and set register Ai to refer to the fresh stack variable, consume two more bytes (n and i resp).  See CALL P,N to determine the number of locals required."
+  "in the current environment, set the nth local to a fresh REF cell, and set (argument) register Ai to refer to the fresh stack variable, consume two more bytes (n and i resp)."
   (declare (ignorable byte))
   (let* ((addr (+ e (next-byte) 1))
          (i (next-byte))
@@ -505,6 +511,7 @@ bytes from the code stream (n and i resp), inc h pointer (heap) once"
 	  (setf number-of-args (arity proc))
 	  (setf cp p)
 	  (setf b0 b)
+          (format *standard-output* "f-call proc=~s p=~a @p=~s~%" proc (code-addr p) (logand #xff (aref code p)))
 	  (setf p (code-addr proc)))
       (backtrack))))
 

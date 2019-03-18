@@ -158,9 +158,9 @@
                    (let ((reg (alloc-reg (fourth item))))
                    `('unify-x-variable ,reg
                      ,@(tail)
-                     'get-structure ,struct-name ,reg
+                     get-structure ,struct-name ,reg
                      ,@(struct-tail)))
-                 `('get-structure ,struct-name ,a-reg
+                 `(get-structure ,struct-name ,a-reg
                    ,@(struct-tail)
                    ,@(tail))))))
           (list
