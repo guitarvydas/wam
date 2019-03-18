@@ -87,7 +87,7 @@
           ((father son-of-paul paul)))
   (let ((result (wam:?- (father ?X paul))))
     (format *standard-output* "~&result = ~S~%" result)
-    (if (equal '(((?X . "SON-OF-PAUL") (?Y . "PAUL")))
+    (if (equal '(((?X . "SON-OF-PAUL")))
                result)
         'OK
       'FAILED)))
