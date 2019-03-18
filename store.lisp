@@ -1,5 +1,7 @@
 (in-package :wam)
 
+(defparameter *wam-debug* t)
+
 (defvar *code-io*) ;; class IO - used to hold compiled code
 
 (defmacro next-byte ()

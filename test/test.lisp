@@ -86,7 +86,7 @@
   (wam:defrel father
           ((father son-of-paul paul)))
   (let ((result (wam:?- (father ?X paul))))
-    (format *standard-output* "~&result = ~S~%" result)
+    #+nil(format *standard-output* "~&result = ~S~%" result)
     (if (equal '(((?X . "SON-OF-PAUL")))
                result)
         'OK
@@ -373,3 +373,27 @@
 ;;;        '<answer>
 ;;;       'OK
 ;;;     'FAIL))
+
+
+(defun test-1 (func)
+  (let ((result (funcall func)))
+    (format *standard-output* "~A : ~A~%" func result)))
+
+(defun test-all ()
+  (let ((wam:*wam-debug* nil))
+    (test-1 #'ltest0)
+    (test-1 #'ltest1)
+    (test-1 #'ltest2)
+    (test-1 #'ltest4)
+    (test-1 #'ltest5)
+    (test-1 #'ltest6)
+    (test-1 #'ltest7)
+    (test-1 #'ltest8)
+    (test-1 #'ltest9)
+    (test-1 #'ltest10)
+    (test-1 #'ltest11)
+    (test-1 #'ltest12)
+    (test-1 #'ltest13)
+    (test-1 #'ltest13a)
+    (test-1 #'ltest14)
+    (test-1 #'ltest15)))

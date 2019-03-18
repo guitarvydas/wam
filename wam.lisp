@@ -64,17 +64,17 @@
   (loop for i from 0 below store-size do
         (setf (aref store i) 0)))
 
-(defun interp-wam (start symbols &optional display)
+(defun interp-wam (start symbols)
   (let (result)
     (reset-wam)
     (setf p (code-addr start))
-    (when display
+    (when *wam-debug*
       (format t "p=/~s/ @p=/~A/~%" p (logand #xff (aref code p)) ))
     (catch 'quit
       (loop while (>= p 0)
         do (let ((byte (next-byte)))
              (declare (type (integer 0 255) byte))
-             (when display
+             (when *wam-debug*
                (format t "interp ~S ~A code[0]=~S~%" byte (disassem byte) (logand #xff (aref code 0))))
              (if (= #.done byte)
                  (progn
@@ -85,7 +85,7 @@
                            result))
                    (backtrack))
                (funcall (aref opcode-array byte) byte))
-             (when display
+             (when *wam-debug*
                (wam/debug:dump)
                (format t "~%")))))
     result))
@@ -511,7 +511,8 @@ bytes from the code stream (n and i resp), inc h pointer (heap) once"
 	  (setf number-of-args (arity proc))
 	  (setf cp p)
 	  (setf b0 b)
-          (format *standard-output* "f-call proc=~s p=~a @p=~s~%" proc (code-addr p) (logand #xff (aref code p)))
+          #+nil(format *standard-output* "f-call proc=~s p=~a @p=~s~%"
+                       proc (code-addr p) (logand #xff (aref code p)))
 	  (setf p (code-addr proc)))
       (backtrack))))
 

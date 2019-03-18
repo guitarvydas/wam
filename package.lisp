@@ -13,7 +13,8 @@
    #:parse-query
    #:parse-rule
    
-   #:store))
+   #:store
+   #:*wam-debug*))
 
 (defpackage wam/debug
   (:use :cl

@@ -19,7 +19,8 @@
 
 (defmacro defrel (name &rest rules)
   `(let ((r-code (defrel-1 ',name ',rules)))
-     (wam/debug:tprint r-code)
+     (when *wam-debug*
+       (wam/debug:tprint r-code))
      (assemble (make-instance 'list-io :list r-code) *code-io*)))
 
 (defmacro defrel0 (name &rest rules)
@@ -384,14 +385,14 @@
 (defmacro ?- (&body body)
   `(run-query ',body))
 
-(defun run-query (body)
+(defun run-query (body &optional (display nil))
   (multiple-value-bind (tree symbols has-locals)
        (allocate (parse-query body))
     (let ((q-code (defquery% 'query tree)))
-      (wam/debug:tprint q-code)
-      (terpri)
+      (when display
+        (wam/debug:tprint q-code)
+        (terpri))
       (assemble (make-instance 'list-io :list q-code) *code-io*)
       (interp-wam (asm-get-name 'query/0)
-                  (remove-if #'(lambda (x) (eq '+lanon+ (car x))) symbols)
-                  t))))
+                  (remove-if #'(lambda (x) (eq '+lanon+ (car x))) symbols)))))
 
