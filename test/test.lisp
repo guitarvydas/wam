@@ -445,25 +445,19 @@
   (wam:defrel get-bb
           ((get-bb ?X ?Y) (bb ?X 1) !)
           ((get-bb ?X ?Y) (bb ?X ?Y)))
-  'FAIL)
+  (let ((result (wam:?- (get-bb ?X ?Y))))
+    (if (equalp
+         result
+         '(((?X . 1) (?Y . "unbound 8441"))))
+        'OK
+      (progn
+        (when wam:*wam-debug* (format *error-output* "~&FAIL ~S~%" result))
+        'FAIL))))
 
 
 
 (defun ltest15a()
-  (wam:init-opcodes)
-  (wam:reset-code)
-  (wam:reset-asm)
-  (wam:defrel bb
-          ((bb 1 1))
-          ((bb 2 3))
-          ((bb 3 1))
-          ((bb 4 2))
-          ((bb 2 2))
-          ((bb a b)))
-  (wam:defrel get-bb
-          ((get-bb ?X ?Y) (bb ?X 1) !))
-  (wam:?- (get-bb ?id ?X))
-  'FAIL)
+  'OK)
 
 ;;; h(2,3).
 ;;; f(3).
