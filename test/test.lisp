@@ -86,7 +86,7 @@
   (wam:defrel father
           ((father son-of-paul paul)))
   (let ((result (wam:?- (father ?X paul))))
-    #+nil(format *standard-output* "~&result = ~S~%" result)
+    (when wam:*wam-debug* (format *standard-output* "~&result = ~S~%" result))
     (if (equal '(((?X . "SON-OF-PAUL")))
                result)
         'OK
@@ -171,7 +171,7 @@
          '(((?X . #("A/2" "B" "C")))))
         'OK
       (progn
-        (format *error-output* "~&FAIL ~S~%" result)
+        (when wam:*wam-debug* (format *error-output* "~&FAIL ~S~%" result))
         'FAIL))))
 
 (defun ltest8 ()
@@ -294,7 +294,53 @@
    'FAIL))
 
 
+;;; bb(1,1).
+;;; bb(2,3).
+;;; bb(3,1).
+;;; bb(4,2).
+;;; bb(2,2).
+;;; bb(a,b).
+
+;;; get-bb(X,Y) :- !,bb(X,Y),bb(Y,X).
+
+;;; test(X,Y) :-
+;;;   get-bb(X,Y).
+
 (defun ltest14 ()
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel bb
+          ((bb 1 1))
+          ((bb 2 3))
+          ((bb 3 1))
+          ((bb 4 2))
+          ((bb 2 2))
+          ((bb a b)))
+  (wam:defrel get-bb
+          ((get-bb ?X ?Y) (bb ?X ?Y) (bb ?Y ?X)))
+  (let ((result (wam:?- (get-bb ?id ?X))))
+    (if (equalp
+         result
+         '(((?ID . 2) (?X . 2))((?ID . 1) (?X . 1))))
+        'OK
+      (progn
+        (when wam:*wam-debug* (format *error-output* "~&FAIL ~S~%" result))
+        'FAIL))))
+
+;;; bb(1,1).
+;;; bb(2,3).
+;;; bb(3,1).
+;;; bb(4,2).
+;;; bb(2,2).
+;;; bb(a,b).
+
+;;; get-bb(X,Y) :- !,bb(X,Y),bb(Y,X).
+
+;;; test(X,Y) :-
+;;;   get-bb(X,Y).
+
+(defun ltest14b ()
   (wam:init-opcodes)
   (wam:reset-code)
   (wam:reset-asm)
@@ -310,10 +356,79 @@
   (let ((result (wam:?- (get-bb ?id ?X))))
     (if (equalp
          result
+         '(((?ID . 2) (?X . 2))((?ID . 1) (?X . 1))))
+        'OK
+      (progn
+        (when wam:*wam-debug* (format *error-output* "~&FAIL ~S~%" result))
+        'FAIL))))
+
+;;; bb(1,1).
+;;; bb(2,3).
+;;; bb(3,1).
+;;; bb(4,2).
+;;; bb(2,2).
+;;; bb(a,b).
+
+;;; get-bb(X,Y) :- bb(X,Y),!,bb(Y,X).
+
+;;; test(X,Y) :-
+;;;   get-bb(X,Y).
+
+(defun ltest14c ()
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel bb
+          ((bb 1 1))
+          ((bb 2 3))
+          ((bb 3 1))
+          ((bb 4 2))
+          ((bb 2 2))
+          ((bb a b)))
+  (wam:defrel get-bb
+          ((get-bb ?X ?Y) (bb ?X ?Y) ! (bb ?Y ?X)))
+  (let ((result (wam:?- (get-bb ?id ?X))))
+    (if (equalp
+         result
          '(((?ID . 1) (?X . 1))))
         'OK
       (progn
-        (format *error-output* "~&FAIL ~S~%" result)
+        (when wam:*wam-debug* (format *error-output* "~&FAIL ~S~%" result))
+        'FAIL))))
+
+;;; bb(1,1).
+;;; bb(2,3).
+;;; bb(3,1).
+;;; bb(4,2).
+;;; bb(2,2).
+;;; bb(a,b).
+
+;;; get-bb(X,Y) :- bb(X,Y),bb(Y,X),!.
+
+;;; test(X,Y) :-
+;;;   get-bb(X,Y).
+
+;;; difference from ltest14 == cut at end of get-bb
+(defun ltest14a ()
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (wam:defrel bb
+          ((bb 1 1))
+          ((bb 2 3))
+          ((bb 3 1))
+          ((bb 4 2))
+          ((bb 2 2))
+          ((bb a b)))
+  (wam:defrel get-bb
+          ((get-bb ?X ?Y) (bb ?X ?Y) (bb ?Y ?X) !))
+  (let ((result (wam:?- (get-bb ?id ?X))))
+    (if (equalp
+         result
+         '(((?ID . 1) (?X . 1))))
+        'OK
+      (progn
+        (when wam:*wam-debug* (format *error-output* "~&FAIL ~S~%" result))
         'FAIL))))
 
 (defun ltest15()
@@ -330,7 +445,8 @@
   (wam:defrel get-bb
           ((get-bb ?X ?Y) (bb ?X 1) !)
           ((get-bb ?X ?Y) (bb ?X ?Y)))
-  (wam:?- (get-bb ?id ?X)))
+  'FAIL)
+
 
 
 (defun ltest15a()
@@ -346,7 +462,8 @@
           ((bb a b)))
   (wam:defrel get-bb
           ((get-bb ?X ?Y) (bb ?X 1) !))
-  (wam:?- (get-bb ?id ?X)))
+  (wam:?- (get-bb ?id ?X))
+  'FAIL)
 
 ;;; h(2,3).
 ;;; f(3).
@@ -396,4 +513,9 @@
     (test-1 #'ltest13)
     (test-1 #'ltest13a)
     (test-1 #'ltest14)
-    (test-1 #'ltest15)))
+    (test-1 #'ltest14a)
+    (test-1 #'ltest14b)
+    (test-1 #'ltest14c)
+    (test-1 #'ltest15)
+    (test-1 #'ltest15a)
+    (test-1 #'ltest16)))
