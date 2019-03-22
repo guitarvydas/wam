@@ -71,8 +71,16 @@
   arity
   locals)
 
+(defun array-to-list (a)
+  (map 'list #'identity a))
+
 (defun parse-clause (clause)
   (if (and (symbolp clause) (string= "!" (symbol-name clause))) ;;(eq clause '!)
       '(cut)
-    `(proc ,(make-call :name (car clause) :arity (1- (length clause)) :locals 0)
-           ,@(mapcar #'parse-arg (cdr clause)))))
+    (let ((cl (if (vectorp clause)
+                  (array-to-list clause)
+                clause)))
+      `(proc ,(make-call :name (car cl) :arity (1- (length cl)) :locals 0)
+             ,@(mapcar #'parse-arg (cdr cl))))))
+
+

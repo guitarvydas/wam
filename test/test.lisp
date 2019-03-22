@@ -463,27 +463,54 @@
 ;;; f(3).
 ;;; p(Z,h(Z,W),f(W)).
 ;;; x(W,Z) :- p(Z,h(Z,W),f(W)).
+;;; ?- x(W,Z) --> yes
 
-;;;   (if (equalp
-;;;        (wam:?- (struct #(a ?X ?Y)))
-;;;        '(((?X . 1) (?Y . 2)) ((?X . "B") (?Y . "C"))))
-;;;       'OK
-;;;     'FAIL))
+
+-- ltest16 not working --
 
 (defun ltest16 ()
   (wam:init-opcodes)
   (wam:reset-code)
   (wam:reset-asm)
+  (defrel h ((h #(h 2 3))))
+  (defrel f ((f 3)))
+  (defrel p ((p #(p ?Z #(h ?W ?Z) #(f ?W)))))
+  (defrel x ((x ?W ?Z) #(p ?Z (h ?Z ?W) #(f ?W))))
+  (wam:?- (x ?W ?Z)))
+
+; h(2,3).
+; f(3).
+; p(Z,h(W,Z),f(W)).
+; x(W,Z) :- p(W,h(W,Z),f(W)).
+
+; % query is ?- x(W,Z). --> Z = W
+; % ltest17
+(defun ltest17 ()
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
   (defrel h ((h #(2 3))))
   (defrel f ((f 3)))
-  (defrel p ((p #(?Z (h ?Z ?W) #(f ?W)))))
-  (wam:?- (p ?A)))
+  (defrel p ((p #(p ?Z #(h ?W ?Z) #(f ?W)))))
+  (defrel x ((x ?W ?Z) #(p ?W (h ?W ?Z) #(f ?W))))
+  (wam:?- (x ?W ?Z)))
 
-;;;   (if (equalp
-;;;        (wam:?- (struct #(a ?X ?Y)))
-;;;        '<answer>
-;;;       'OK
-;;;     'FAIL))
+; h(2,3).
+; f(3).
+; p(11,h(4,5),f(6)).
+; x(W,Z) :- p(W,h(W,Z),f(W)).
+
+; % query is ?- x(W,Z). --> no
+; % ltest18
+(defun ltest18 ()
+  (wam:init-opcodes)
+  (wam:reset-code)
+  (wam:reset-asm)
+  (defrel h ((h #(2 3))))
+  (defrel f ((f 3)))
+  (defrel p ((p #(p 11 #(h 4 5) #(f 6)))))
+  (wam:?- (x ?W ?Z)))
+
 
 
 (defun test-1 (func)
