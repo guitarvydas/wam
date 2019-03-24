@@ -466,7 +466,7 @@
 ;;; ?- x(W,Z) --> yes
 
 
--- ltest16 not working --
+;;-- ltest16 not working --
 
 (defun ltest16 ()
   (wam:init-opcodes)
